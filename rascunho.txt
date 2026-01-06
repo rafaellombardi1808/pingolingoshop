@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pingo Lingo Shop</title>
+  <style>
+    :root{
+      --bg:#eaf7ff;
+      --card:#ffffffcc;
+      --text:#0f1b2d;
+      --muted:#4d5b75;
+      --brand:#1f86ff;
+      --brand2:#33c1ff;
+      --line:#cfe6ff;
+      --shadow: 0 14px 40px rgba(10,40,90,.12);
+      --radius: 18px;
+      --radius2: 26px;
+    }
+    [data-theme="dark"]{
+      --bg:#0b1524;
+      --card:#0f1d33cc;
+      --text:#eef5ff;
+      --muted:#b5c3dd;
+      --brand:#4aa7ff;
+      --brand2:#38d4ff;
+      --line:#1f3357;
+      --shadow: 0 14px 40px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1000px 600px at 20% 0%, rgba(51,193,255,.28), transparent 55%),
+        radial-gradient(900px 600px at 80% 10%, rgba(31,134,255,.22), transparent 60%),
+        linear-gradient(135deg, rgba(31,134,255,.12), transparent 35%),
+        var(--bg);
+    }
+
+    /* Topbar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(255,255,255,.35));
+      border-bottom:1px solid var(--line);
+    }
+    [data-theme="dark"] .topbar{
+      background: linear-gradient(180deg, rgba(15,29,51,.85), rgba(15,29,51,.45));
+    }
+    .wrap{max-width:1120px; margin:0 auto; padding:14px 16px;}
+    .nav{display:flex; align-items:center; justify-content:space-between; gap:14px;}
+    .brand{display:flex; align-items:center; gap:12px; min-width:220px;}
+    .logo{
+      width:44px; height:44px; border-radius:16px;
+      background: linear-gradient(135deg, var(--brand2), var(--brand));
+      box-shadow: var(--shadow);
+      display:grid; place-items:center;
+      color:white; font-weight:900;
+    }
+    .brand h1{margin:0; font-size:18px; line-height:1.1}
+    .brand p{margin:0; font-size:12px; color:var(--muted); font-weight:700}
+    .nav-links{display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
+    .nav-links a{
+      text-decoration:none; color:var(--text);
+      padding:10px 12px; border-radius:14px;
+      font-weight:800; font-size:13px;
+      border:1px solid transparent;
+    }
+    .nav-links a:hover{border-color:var(--line); background:rgba(255,255,255,.3)}
+    [data-theme="dark"] .nav-links a:hover{background:rgba(255,255,255,.06)}
+    .nav-actions{display:flex; align-items:center; gap:10px;}
+    .btn{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.55);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:900;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+    }
+    [data-theme="dark"] .btn{background: rgba(255,255,255,.06)}
+    .btn:hover{transform: translateY(-1px)}
+    .btn:active{transform: translateY(0px)}
+    .btn-primary{
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--brand2), var(--brand));
+      color:white;
+      box-shadow: 0 10px 25px rgba(31,134,255,.25);
+    }
+    .btn-danger{
+      border-color: transparent;
+      background: linear-gradient(135deg, #ff5d5d, #ff2e78);
+      color:white;
+    }
+    .btn-full{width:100%; justify-content:center}
+    .cartBadge{
+      background: rgba(255,255,255,.2);
+      border:1px solid rgba(255,255,255,.35);
+      padding:2px 8px;
+      border-radius:999px;
+      font-weight:1000;
+      font-size:12px;
+    }
+
+    /* Hero */
+    section{scroll-margin-top:88px}
+    .hero{padding:26px 0 8px;}
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    @media (max-width: 920px){
+      .hero-grid{grid-template-columns:1fr}
+      .nav-links{display:none}
+    }
+    .card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hero-left{padding:22px; position:relative;}
+    .hero-title{margin:0; font-size:34px; line-height:1.05; letter-spacing:-.02em;}
+    .hero-sub{margin:10px 0 0; color:var(--muted); font-weight:800; line-height:1.45;}
+    .hero-cta{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      font-weight:900;
+      color:var(--text);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.45);
+    }
+    [data-theme="dark"] .chip{background: rgba(255,255,255,.06)}
+    .mini{padding:16px;}
+    .mini h3{margin:0; font-size:16px}
+    .mini p{margin:8px 0 0; color:var(--muted); font-weight:800; line-height:1.4}
+    .mini .sac{margin-top:10px; font-weight:1000; display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+    .mini .sac a{color:inherit; text-decoration:none}
+    .mini .sac a:hover{text-decoration:underline}
+
+    /* Catalog */
+    .section-title{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:22px 0 10px;}
+    .section-title h2{margin:0; font-size:20px}
+    .section-title p{margin:0; color:var(--muted); font-weight:800; font-size:13px}
+    .controls{
+      display:flex; gap:10px; flex-wrap:wrap;
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: 26px;
+      padding:12px;
+      box-shadow: var(--shadow);
+    }
+    .input{
+      flex: 1 1 220px;
+      display:flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.55);
+      font-weight:900;
+    }
+    [data-theme="dark"] .input{background: rgba(255,255,255,.06)}
+    .input input{border:none; outline:none; width:100%; background: transparent; color:var(--text); font-weight:900;}
+    .select{
+      flex: 0 0 220px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.55);
+      color:var(--text);
+      font-weight:900;
+      outline:none;
+    }
+    [data-theme="dark"] .select{background: rgba(255,255,255,.06)}
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:12px;
+    }
+    @media (max-width: 1060px){ .grid{grid-template-columns: repeat(3,1fr)} }
+    @media (max-width: 760px){ .grid{grid-template-columns: repeat(2,1fr)} }
+    @media (max-width: 480px){ .grid{grid-template-columns: 1fr} }
+
+    .prod{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:flex; flex-direction:column;
+      min-height: 360px;
+      position:relative;
+    }
+    .prod-img{
+      height:170px;
+      display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg, rgba(51,193,255,.14), rgba(31,134,255,.10));
+      border-bottom:1px solid var(--line);
+      padding:10px;
+      position:relative;
+    }
+    .prod-img img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      border-radius:16px;
+      background: rgba(255,255,255,.35);
+    }
+    .placeholder{
+      width:100%; height:100%;
+      border-radius:16px;
+      border:2px dashed rgba(31,134,255,.35);
+      background: rgba(255,255,255,.18);
+      display:grid; place-items:center;
+      font-weight:1000;
+      color: var(--muted);
+      text-align:center;
+      padding:10px;
+      line-height:1.25;
+    }
+    .badge-bisquit{
+      position:absolute;
+      top:10px; left:10px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:1000;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.70);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 25px rgba(31,134,255,.12);
+    }
+    [data-theme="dark"] .badge-bisquit{background: rgba(15,29,51,.65)}
+    .prod-body{padding:12px 12px 10px; display:flex; flex-direction:column; gap:8px; flex:1}
+    .prod-name{margin:0; font-size:14px; line-height:1.2; font-weight:1000}
+    .prod-desc{margin:0; color:var(--muted); font-weight:800; font-size:12px; line-height:1.35}
+    .row{display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .price{font-weight:1100; font-size:16px; letter-spacing:-.01em;}
+    .actions{padding:10px 12px 14px; display:flex; gap:10px;}
+    .btn-mini{
+      padding:10px 12px;
+      border-radius:16px;
+      width:100%;
+      justify-content:center;
+      font-size:13px;
+      font-weight:1000;
+    }
+
+    /* Drawer cart */
+    .overlay{
+      position:fixed; inset:0; z-index:90;
+      background: rgba(0,0,0,.35);
+      opacity:0; pointer-events:none;
+      transition: .2s ease;
+    }
+    .overlay.show{opacity:1; pointer-events:auto}
+    .drawer{
+      position:fixed; right:0; top:0; height:100%; z-index:91;
+      width: min(420px, 92vw);
+      background: var(--bg);
+      border-left:1px solid var(--line);
+      box-shadow: -20px 0 60px rgba(0,0,0,.18);
+      transform: translateX(110%);
+      transition: .25s ease;
+      display:flex; flex-direction:column;
+    }
+    .drawer.show{transform: translateX(0)}
+    .drawer-head{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--line);
+      background: var(--card);
+      backdrop-filter: blur(10px);
+    }
+    .drawer-head h3{margin:0; font-size:16px}
+    .iconBtn{
+      width:40px; height:40px; border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.55);
+      cursor:pointer;
+      display:grid; place-items:center;
+      font-weight:1100;
+      color:var(--text);
+    }
+    [data-theme="dark"] .iconBtn{background: rgba(255,255,255,.06)}
+    .drawer-body{padding:12px 12px; overflow:auto; display:flex; flex-direction:column; gap:10px}
+    .cartItem{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: 26px;
+      padding:10px;
+      display:grid;
+      grid-template-columns: 56px 1fr;
+      gap:10px;
+      align-items:center;
+    }
+    .cartThumb{
+      width:56px; height:56px; border-radius:16px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.35);
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden;
+      font-weight:1000;
+      color: var(--muted);
+      text-align:center;
+      padding:6px;
+      line-height:1.1;
+    }
+    .cartThumb img{width:100%; height:100%; object-fit:cover}
+    .cartName{margin:0; font-weight:1100; font-size:13px; line-height:1.2}
+    .cartMeta{margin:4px 0 0; color:var(--muted); font-weight:900; font-size:12px}
+    .qtyRow{margin-top:8px; display:flex; gap:8px; align-items:center; justify-content:space-between;}
+    .qtyBtns{display:flex; gap:8px; align-items:center}
+    .qtyBtn{
+      width:36px; height:36px; border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.55);
+      cursor:pointer;
+      font-weight:1100;
+      color:var(--text);
+    }
+    [data-theme="dark"] .qtyBtn{background: rgba(255,255,255,.06)}
+    .qty{min-width:34px; text-align:center; font-weight:1100;}
+    .removeBtn{border:none; background: transparent; color: #ff2e78; font-weight:1100; cursor:pointer;}
+    .drawer-foot{
+      padding:12px 12px 14px;
+      border-top:1px solid var(--line);
+      background: var(--card);
+    }
+    .totalRow{display:flex; align-items:center; justify-content:space-between; font-weight:1100; margin-bottom:10px;}
+    .note{margin-top:8px; font-size:12px; color:var(--muted); font-weight:800; line-height:1.35;}
+
+    /* FAQ + Footer */
+    .faq{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+    @media (max-width: 860px){ .faq{grid-template-columns:1fr} }
+    details{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      padding:12px 14px;
+    }
+    summary{cursor:pointer; font-weight:1100; list-style:none;}
+    summary::-webkit-details-marker{display:none}
+    details p{margin:10px 0 0; color:var(--muted); font-weight:800; line-height:1.45}
+    footer{margin:26px 0 30px; color:var(--muted); font-weight:800; text-align:center;}
+    .small{font-size:12px;}
+  </style>
+</head>
+
+<body data-theme="light">
+  <!--
+    ✅ IMAGENS
+    1) Crie a pasta "img" na mesma pasta do index.html
+    2) Coloque as fotos lá dentro.
+    3) O código já está preparado: se a imagem não existir, aparece um "SEM FOTO AINDA".
+
+    Exemplos de nomes (você pode mudar depois no array PRODUCTS):
+      img/escolar-caderno-capa-1.jpg
+      img/doces-pirulito-pingo.jpg
+      img/bisquit-ima-pingo.jpg
+  -->
+
+  <header class="topbar">
+    <div class="wrap">
+      <div class="nav">
+        <div class="brand">
+          <div class="logo">PL</div>
+          <div>
+            <h1>Pingo Lingo Shop</h1>
+            <p>Livros • Bisquit • Escolar • Acessórios • Doces</p>
+          </div>
+        </div>
+
+        <nav class="nav-links">
+          <a href="#home">Home</a>
+          <a href="#catalogo">Catálogo</a>
+          <a href="#faq">FAQ</a>
+          <a href="#sac">SAC</a>
+        </nav>
+
+        <div class="nav-actions">
+          <button class="btn" id="themeBtn" title="Alternar tema">🌙 Tema</button>
+          <button class="btn btn-primary" id="cartBtn" title="Abrir carrinho">
+            🛒 Carrinho <span class="cartBadge" id="cartCount">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="home" class="hero">
+      <div class="hero-grid">
+        <div class="card hero-left">
+          <h2 class="hero-title">Aproveite<br/>as ofertas de volta ás aulas! Comece a comprar💙</h2>
+          <p class="hero-sub">
+            Escolha os produtos, adicione no carrinho e finalize direto no WhatsApp com a lista pronta.
+          </p>
+
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#catalogo">🛍️ Ver Catálogo</a>
+            <button class="btn" onclick="openCart()">🛒 Abrir Carrinho</button>
+            <span class="chip">🧾 Pedido no WhatsApp</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="mini">
+            <h3>Atendimento (SAC)</h3>
+            <p>Dúvidas, trocas, encomendas e suporte: fale com a gente no WhatsApp.</p>
+            <div class="sac">
+              <span class="chip">📞</span>
+              <a class="btn btn-primary" href="https://wa.me/5511991205419" target="_blank" rel="noopener">
+                WhatsApp: (11) 99120-5419
+              </a>
+            </div>
+            <p class="small" style="margin-top:10px;">
+              Ao clicar, você será direcionado(a) para o WhatsApp.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="catalogo">
+      <div class="section-title">
+        <div>
+          <h2>Catálogo</h2>
+          <p>Filtre por categoria e adicione no carrinho.</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="input">
+          🔎 <input id="searchInput" placeholder="Buscar por nome… (ex: diário, caderno, pinguim)" />
+        </div>
+
+        <select id="catSelect" class="select" title="Filtrar categoria">
+          <option value="all">Todas as categorias</option>
+          <option value="Livros">Livros</option>
+          <option value="Jogos">Jogos</option>
+          <option value="Bisquit">Bisquit</option>
+          <option value="Acessórios">Acessórios</option>
+          <option value="Escolar">Materiais Escolares</option>
+          <option value="Doces">Doces</option>
+          <option value="Sob encomenda">Sob encomenda</option>
+        </select>
+
+        <select id="sortSelect" class="select" title="Ordenar">
+          <option value="relevance">Ordenar: padrão</option>
+          <option value="price-asc">Preço: menor → maior</option>
+          <option value="price-desc">Preço: maior → menor</option>
+          <option value="name-asc">Nome: A → Z</option>
+        </select>
+      </div>
+
+      <div id="productsGrid" class="grid"></div>
+    </section>
+
+    <section id="faq">
+      <div class="section-title">
+        <div>
+          <h2>FAQ</h2>
+          <p>Dúvidas frequentes</p>
+        </div>
+      </div>
+
+      <div class="faq">
+        <details>
+          <summary>Como faço para comprar?</summary>
+          <p>Adicione os itens no carrinho e clique em <b>“Finalizar no WhatsApp”</b>. A mensagem já vai com a lista dos produtos e o total.</p>
+        </details>
+
+        <details>
+          <summary>Os produtos são pronta entrega?</summary>
+          <p>Alguns sim e outros são <b>sob encomenda</b>. A gente confirma no WhatsApp.</p>
+        </details>
+
+        <details>
+          <summary>Como funciona o frete/entrega?</summary>
+          <p>Frete/entrega são combinados no WhatsApp. Você pode pedir as opções e valores.</p>
+        </details>
+
+        <details>
+          <summary>Posso pedir um tema personalizado?</summary>
+          <p>Sim! Temos opção <b>“Sob encomenda”</b>: você pede o tema e a gente faz.</p>
+        </details>
+
+        <details>
+          <summary>Reembolso / Troca</summary>
+          <p>Se tiver problema, chama o SAC: <b>(11) 99120-5419</b>.</p>
+        </details>
+
+        <details>
+          <summary>O carrinho é individual?</summary>
+          <p>Sim. Cada celular/computador tem seu carrinho separado (salvo no navegador).</p>
+        </details>
+      </div>
+    </section>
+
+    <section id="sac">
+      <div class="section-title">
+        <div>
+          <h2>SAC</h2>
+          <p>Suporte, encomendas e dúvidas</p>
+        </div>
+      </div>
+
+      <div class="card" style="padding:16px;">
+        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+          <div>
+            <div class="chip">📞 WhatsApp</div>
+            <h3 style="margin:10px 0 6px;">(11) 99120-5419</h3>
+            <p style="margin:0; color:var(--muted); font-weight:800; line-height:1.4;">
+              Clique no botão e fale com a gente. Se preferir, finalize o carrinho e a mensagem vai pronta.
+            </p>
+          </div>
+          <a class="btn btn-primary" href="https://wa.me/5511991205419" target="_blank" rel="noopener">
+            💬 Chamar no WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <footer>
+        <div>Pingo Lingo Shop • Catálogo + carrinho + WhatsApp</div>
+        <div class="small">Coloque suas fotos na pasta <b>img/</b> e o site puxa automaticamente.</div>
+      </footer>
+    </section>
+  </main>
+
+  <!-- Overlay + Drawer do Carrinho -->
+  <div class="overlay" id="overlay" onclick="closeCart()"></div>
+
+  <aside class="drawer" id="drawer" aria-label="Carrinho de compras">
+    <div class="drawer-head">
+      <h3>🛒 Seu Carrinho</h3>
+      <button class="iconBtn" onclick="closeCart()" aria-label="Fechar carrinho">✕</button>
+    </div>
+
+    <div class="drawer-body" id="cartItems"></div>
+
+    <div class="drawer-foot">
+      <div class="totalRow">
+        <span>Total</span>
+        <span id="cartTotal">R$ 0,00</span>
+      </div>
+
+      <a class="btn btn-primary btn-full" id="checkoutBtn" href="#" onclick="this.href=buildCheckoutLink();">
+        ✅ Finalizar no WhatsApp
+      </a>
+      <button class="btn btn-danger btn-full" onclick="clearCart()">🧹 Limpar carrinho</button>
+
+      <div class="note">
+        Ao finalizar, você será direcionado(a) para o WhatsApp com a lista dos itens e o total.
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    // ========= CONFIG =========
+    const WHATSAPP_NUMBER = "5511991205419"; // 55 + DDD + número
+
+    // ========= PRODUTOS (baseados nas suas prints) =========
+    // Regra: tudo sem emoji, SÓ Bisquit com emoji (🎨) — aplicado no render, não precisa colocar emoji aqui.
+    const PRODUCTS = [
+      // BISQUIT
+      { id:"bisquit-pingos-bote-5cm", name:"Pingos navegando em um bote (arte 5cm)", price:15.00, category:"Bisquit", image:"images/pingosnavegando.jpg", desc:"Arte em bisquit (pode ser sob encomenda)." },
+      { id:"bisquit-ima-geladeira-pingo", name:"Imã de geladeira Pingo", price:8.00, category:"Bisquit", image:"images/imapingo.jpg", desc:"Imã fofo do Pingo." },
+      { id:"bisquit-pinga-mesa", name:"Pinga para colocar em cima da mesa", price:3.00, category:"Bisquit", image:"images/pingamesa.jpg", desc:"Mini enfeite para mesa." },
+      { id:"bisquit-pinguim-esqueitista-chaveiro", name:"Pinguim esqueitista chaveiro", price:5.00, category:"Bisquit", image:"images/pingoskate.jpg", desc:"Chaveiro tema gelo." },
+      { id:"bisquit-pungu-iglu", name:"Pungu em cima de um iglu", price:4.00, category:"Bisquit", image:"images/pungoiglu.jpg", desc:"Mini cenário/decoração." },
+      { id:"bisquit-capivara-banho", name:"Capivara tomando banho", price:8.00, category:"Bisquit", image:"images/capivaratomandobanho.jpg", desc:"Chaveiro fofo." },
+      { id:"bisquit-pinga-iglu", name:"Pinga iglu", price:8.00, category:"Bisquit", image:"images/pingaiglu.jpg", desc:"Decoração fofa." },
+      { id:"acessorio-melanpingo", name:"Melanpingo", price:8.00, category:"Bisquit", image:"images/melanpingo.jpg", desc:"Pinguim melancia." },
+      { id:"tigre-barrigudinho", name:"Tigre barrigudinho", price:10.00, category:"Bisquit", image:"images/tigregordinho.jpg", desc:"Com nome." },
+      { id:"acessorio-chaveiro-pingo-personalizado", name:"Chaveiro Pingo personalizado", price:10.00, category:"Sob encomenda", image:"images/pingoperso.jpg", desc:"Com o seu nome." },
+      
+      // ACESSÓRIOS (sem emoji)
+      { id:"acessorio-chaveiro-pikachu", name:"Chaveiro Pikachu", price:4.00, category:"Bisquit", image:"images/pikachu.jpg", desc:"Chaveiro." },
+      { id:"acessorio-pinguim-chaveiro", name:"Pinguim chaveiro", price:4.00, category:"Bisquit", image:"images/chaveiropingo.jpg", desc:"Chaveiro." },
+      { id:"acessorio-kit-5-aneis", name:"Kit 5 anéis (cri/adl 1º e 2º)", price:12.00, category:"Acessórios", image:"images/cincoaneis.jpg", desc:"Acessório feito de bisquit." },
+      { id:"acessorio-anel-vaquinha", name:"Anel vaquinha (cri/adl 1º e 2º)", price:3.00, category:"Acessórios", image:"images/anelvaquinha.jpg", desc:"Acessório feito de bisquit." },
+      { id:"acessorio-anel-panda", name:"Anel panda (adl/cri 1º e 2º)", price:3.00, category:"Acessórios", image:"images/anelpanda.jpg", desc:"Acessório feito de bisquit." },
+      { id:"acessorio-anel-pato", name:"Anel pato (adl/cri 1º e 2º)", price:3.00, category:"Acessórios", image:"images/anelpatoo.jpg", desc:"Acessório feito de bisquit." },
+      { id:"acessorio-anel-porquinho", name:"Anel porquinho (cri/adl 1º e 2º)", price:3.00, category:"Acessórios", image:"images/anelporco.jpg", desc:"Acessório feito de bisquit" },
+      { id:"acessorio-anel-pinguim", name:"Anel pinguim (adl/cri 1º e 2º)", price:3.00, category:"Acessórios", image:"images/anelpinguim.jpg", desc:"Acessório feito de bisquit." },
+      { id:"acessorio-chaveiro-pingo-personalizado", name:"Chaveiro Pingo personalizado", price:10.00, category:"Sob encomenda", image:"images/pingoperso.jpg", desc:"Com nome." },
+      
+      // SOB ENCOMENDA (sem emoji)
+      { id:"sob-encomenda-qualquer-tema", name:"Você pode pedir o que quiser (qualquer tema) — Sob encomenda", price:null, category:"Sob encomenda", image:"imAGES/sobencomenda.jpg", desc:"Peça seu tema. Valor a combinar no WhatsApp." },
+
+      // DOCES (pirulito sem emoji)
+      { id:"doces-pirulito-pingo", name:"Pirulito do Pingo [ESGOTADO]", price:8.00, category:"Doces", image:"images/pirulitopingoesg.jpg", desc:"VOLTO JÁ JÁ!" },
+
+      // ESCOLAR (cadernos sem emoji)
+      { id:"escolar-caderno-capa-1", name:"Caderno brochura (capa 1)", price:10.00, category:"Escolar", image:"images/cadernobrocapa1.jpg", desc:"Caderno brochura." },
+      { id:"escolar-caderno-capa-2", name:"Caderno brochura (capa 2)", price:10.00, category:"Escolar", image:"images/cadernobrocapa2.jpg", desc:"Caderno brochura." },
+      { id:"escolar-caderno-capa-3", name:"Caderno brochura (capa 3)", price:10.00, category:"Escolar", image:"images/cadernobrocapa3.jpg", desc:"Caderno brochura." },
+      { id:"escolar-caderno-capa-4", name:"Caderno brochura (capa 4)", price:10.00, category:"Escolar", image:"images/cadernobrocapa4.jpg", desc:"Caderno brochura." },
+      { id:"escolar-caderno-personalizado", name:"Caderno escolar personalizado com seu nome", price:20.00, category:"Escolar", image:"images/cadernospiral.jpg", desc:"Personalizado com o seu nome." },
+
+      // JOGOS / LIVROS (sem emoji)
+      { id:"jogos-aventuras-moti", name:"Jogo de Tabuleiro Aventuras MOTI", price:15.00, category:"Jogos", image:"images/jogodetabuleiroaventurasmoti.jpg", desc:"Jogo de tabuleiro." },
+      { id:"livro-diario-2-pingos-1", name:"Diário de 2 Pingos (Volume 1)", price:5.00, category:"Livros", image:"images/diariodedoispingos-1.png", desc:"Livro." },
+      { id:"livro-diario-2-pingos-2", name:"Diário de 2 Pingos (Volume 2)", price:7.00, category:"Livros", image:"images/diariodedoispingos-2.png", desc:"Livro." },
+      ,{ id:"livro-diario-2-pingos-combo", name:"Combo Diário de 2 Pingos (1 e 2)", price:8.00, category:"Livros", image:"images/diariodedoispingos-1e2.png", desc:"Combo." }
+    ];
+      
+    // ========= HELPERS =========
+    const fmtBRL = (v) => v == null ? "Consulte" : v.toLocaleString("pt-BR", {style:"currency", currency:"BRL"});
+    const escapeTxt = (s) => (s || "").replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+
+    // ========= UI STATE =========
+    const gridEl = document.getElementById("productsGrid");
+    const searchInput = document.getElementById("searchInput");
+    const catSelect = document.getElementById("catSelect");
+    const sortSelect = document.getElementById("sortSelect");
+
+    // ========= CART (local) =========
+    const CART_KEY = "pl_cart_v3";
+    let cart = loadCart();
+
+    function loadCart(){
+      try{ return JSON.parse(localStorage.getItem(CART_KEY) || "{}"); }
+      catch{ return {}; }
+    }
+    function saveCart(){
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      updateCartUI();
+    }
+
+    function addToCart(id){
+      cart[id] = (cart[id] || 0) + 1;
+      saveCart();
+      openCart();
+    }
+    function decQty(id){
+      if(!cart[id]) return;
+      cart[id] -= 1;
+      if(cart[id] <= 0) delete cart[id];
+      saveCart();
+    }
+    function incQty(id){
+      cart[id] = (cart[id] || 0) + 1;
+      saveCart();
+    }
+    function removeItem(id){
+      delete cart[id];
+      saveCart();
+    }
+    function clearCart(){
+      cart = {};
+      saveCart();
+      closeCart();
+    }
+
+    function cartCount(){
+      return Object.values(cart).reduce((a,b)=>a+b,0);
+    }
+
+    function cartTotal(){
+      let total = 0;
+      for(const [id, qty] of Object.entries(cart)){
+        const p = PRODUCTS.find(x=>x.id===id);
+        if(!p) continue;
+        if(p.price != null) total += p.price * qty;
+      }
+      return total;
+    }
+
+    function buildCheckoutLink(){
+      const items = [];
+      for(const [id, qty] of Object.entries(cart)){
+        const p = PRODUCTS.find(x=>x.id===id);
+        if(!p) continue;
+        const priceTxt = p.price == null ? "Consulte" : fmtBRL(p.price);
+        items.push(`- ${p.name} (x${qty}) — ${priceTxt}`);
+      }
+      const totalTxt = fmtBRL(cartTotal());
+      const msg =
+`Olá! Quero fazer um pedido na Pingo Lingo Shop 💙
+
+Itens:
+${items.join("\n")}
+
+Total (itens com preço): ${totalTxt}
+
+Observações:
+- Se tiver item "Consulte", podem me informar o valor?
+- Meu nome: ______
+- Entrega/retirada: ______`;
+
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    }
+
+    // ========= CART DRAWER =========
+    const overlay = document.getElementById("overlay");
+    const drawer = document.getElementById("drawer");
+    const cartBtn = document.getElementById("cartBtn");
+    const cartItemsEl = document.getElementById("cartItems");
+    const cartCountEl = document.getElementById("cartCount");
+    const cartTotalEl = document.getElementById("cartTotal");
+
+    cartBtn.addEventListener("click", openCart);
+
+    function openCart(){
+      overlay.classList.add("show");
+      drawer.classList.add("show");
+    }
+    function closeCart(){
+      overlay.classList.remove("show");
+      drawer.classList.remove("show");
+    }
+
+    function renderCartThumb(p){
+      // Tudo sem emoji no carrinho também.
+      // Se a imagem existir, mostra; se não, mostra "SEM FOTO".
+      return `
+        <div class="cartThumb">
+          <img src="${escapeTxt(p.image||"")}" alt="${escapeTxt(p.name)}"
+               onerror="this.remove(); this.parentElement.textContent='SEM\\nFOTO';">
+        </div>
+      `;
+    }
+
+    function updateCartUI(){
+      cartCountEl.textContent = String(cartCount());
+      cartTotalEl.textContent = fmtBRL(cartTotal());
+
+      const entries = Object.entries(cart);
+      if(entries.length === 0){
+        cartItemsEl.innerHTML = `
+          <div class="card" style="padding:14px;">
+            <b>Seu carrinho está vazio.</b>
+            <div class="small" style="margin-top:6px; color:var(--muted); font-weight:800;">
+              Adicione produtos e finalize no WhatsApp 😉
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      cartItemsEl.innerHTML = entries.map(([id, qty])=>{
+        const p = PRODUCTS.find(x=>x.id===id);
+        if(!p) return "";
+        const priceTxt = p.price == null ? "Consulte" : fmtBRL(p.price);
+        return `
+          <div class="cartItem">
+            ${renderCartThumb(p)}
+            <div>
+              <p class="cartName">${escapeTxt(p.name)}</p>
+              <p class="cartMeta">${escapeTxt(p.category)} • ${priceTxt}</p>
+              <div class="qtyRow">
+                <div class="qtyBtns">
+                  <button class="qtyBtn" onclick="decQty('${escapeTxt(p.id)}')">−</button>
+                  <div class="qty">${qty}</div>
+                  <button class="qtyBtn" onclick="incQty('${escapeTxt(p.id)}')">+</button>
+                </div>
+                <button class="removeBtn" onclick="removeItem('${escapeTxt(p.id)}')">remover</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // ========= CATALOG RENDER =========
+    function getFilteredProducts(){
+      const q = (searchInput.value || "").trim().toLowerCase();
+      const cat = catSelect.value;
+
+      let list = PRODUCTS.filter(p=>{
+        const matchQ =
+          !q ||
+          p.name.toLowerCase().includes(q) ||
+          (p.desc || "").toLowerCase().includes(q) ||
+          (p.category || "").toLowerCase().includes(q);
+
+        const matchCat = (cat === "all") || (p.category === cat);
+        return matchQ && matchCat;
+      });
+
+      const sort = sortSelect.value;
+      if(sort === "price-asc"){
+        list.sort((a,b)=>(a.price ?? 1e9) - (b.price ?? 1e9));
+      }else if(sort === "price-desc"){
+        list.sort((a,b)=>(b.price ?? -1) - (a.price ?? -1));
+      }else if(sort === "name-asc"){
+        list.sort((a,b)=>a.name.localeCompare(b.name, "pt-BR"));
+      }
+      return list;
+    }
+
+    function renderProductMedia(p){
+      // Regra do Rafa:
+      // - Tudo sem emoji
+      // - Só Bisquit com emoji (🎨)
+      // - Se tiver imagem, mostra. Se não, placeholder "SEM FOTO AINDA".
+      const badge = p.category === "Bisquit"
+        ? `<div class="badge-bisquit">🎨 Bisquit</div>`
+        : "";
+
+      const img = p.image
+        ? `<img src="${escapeTxt(p.image)}" alt="${escapeTxt(p.name)}" loading="lazy"
+                onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'placeholder', innerHTML:'SEM FOTO AINDA<br><span style=\\'font-weight:900\\'>coloque em /img</span>'}));">`
+        : `<div class="placeholder">SEM FOTO AINDA<br><span style="font-weight:900">coloque em /img</span></div>`;
+
+      return `${badge}${img}`;
+    }
+
+    function renderProducts(){
+      const list = getFilteredProducts();
+
+      gridEl.innerHTML = list.map(p=>{
+        return `
+          <article class="prod">
+            <div class="prod-img">
+              ${renderProductMedia(p)}
+            </div>
+
+            <div class="prod-body">
+              <h3 class="prod-name">${escapeTxt(p.name)}</h3>
+              <p class="prod-desc">${escapeTxt(p.desc || "")}</p>
+              <div class="row">
+                <span class="chip">${escapeTxt(p.category)}</span>
+                <span class="price">${fmtBRL(p.price)}</span>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn-primary btn-mini" onclick="addToCart('${escapeTxt(p.id)}')">➕ Adicionar</button>
+              <button class="btn btn-mini" onclick="openCart()">🛒 Ver</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      if(list.length === 0){
+        gridEl.innerHTML = `
+          <div class="card" style="grid-column:1/-1; padding:16px;">
+            <b>Nenhum produto encontrado.</b>
+            <div class="small" style="margin-top:6px; color:var(--muted); font-weight:800;">
+              Tente outra busca ou selecione “Todas as categorias”.
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // ========= THEME =========
+    const themeBtn = document.getElementById("themeBtn");
+    const THEME_KEY = "pl_theme_v1";
+    function setTheme(t){
+      document.body.setAttribute("data-theme", t);
+      localStorage.setItem(THEME_KEY, t);
+      themeBtn.textContent = t === "dark" ? "☀️ Tema" : "🌙 Tema";
+    }
+    themeBtn.addEventListener("click", ()=>{
+      const cur = document.body.getAttribute("data-theme") || "light";
+      setTheme(cur === "light" ? "dark" : "light");
+    });
+
+    // ========= INIT =========
+    searchInput.addEventListener("input", renderProducts);
+    catSelect.addEventListener("change", renderProducts);
+    sortSelect.addEventListener("change", renderProducts);
+
+    setTheme(localStorage.getItem(THEME_KEY) || "light");
+    renderProducts();
+    updateCartUI();
+  </script>
+</body>
+      
